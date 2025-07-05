@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0161AF; /* AE blue */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            border: 4px solid #ffffff; /* white border */
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: bold;
+            background: #0161AF;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #003B73;
+            font-weight: 600;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background-color: #F4F6F9;
+            color: #003B73;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #003B73;
+            box-shadow: 0 0 0 3px rgba(1, 97, 175, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .submit-btn {
+            background: #003B73;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 59, 115, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .info-text {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>American Express user exit prediction using ANN</h1>
+        <p class="info-text">Enter customer details to predict churn probability</p>
+        
+        <form action="/predict" method="POST">
+            <div class="form-group">
+                <label for="credit_score">Credit Score:</label>
+                <input type="number" id="credit_score" name="credit_score" min="300" max="850" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="geography">Geography:</label>
+                    <select id="geography" name="geography" required>
+                        <option value="">Select Location</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Bengaluru">Bengaluru</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" min="18" max="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_since">Customer Since (Years):</label>
+                    <input type="number" id="customer_since" name="customer_since" min="0" max="50" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="current_account">Current Account Balance:</label>
+                    <input type="number" id="current_account" name="current_account" min="0" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="num_products">Number of Products:</label>
+                    <input type="number" id="num_products" name="num_products" min="1" max="10" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="upi_enabled">UPI Enabled:</label>
+                    <select id="upi_enabled" name="upi_enabled" required>
+                        <option value="">Select</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="estimated_yearly_income">Estimated Yearly Income:</label>
+                    <input type="number" id="estimated_yearly_income" name="estimated_yearly_income" min="0" step="0.01" required>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Predict Churn</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result - Customer Churn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0161AF; /* AE blue */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: #0161AF;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .result-box {
+            background: #F0F7FF;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #D0E5FF;
+        }
+
+        .prediction {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .will-churn {
+            color: #E60023; /* AE red accent */
+        }
+
+        .will-not-churn {
+            color: #007849; /* Greenish confidence */
+        }
+
+        .probability {
+            font-size: 1.2em;
+            color: #003B73;
+            margin-bottom: 10px;
+        }
+
+        .confidence {
+            font-size: 1.1em;
+            color: #3B4C64;
+        }
+
+        .input-summary {
+            background: #F5FAFF;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px solid #D0E5FF;
+        }
+
+        .input-summary h3 {
+            color: #003B73;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .input-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e7ff;
+        }
+
+        .input-label {
+            font-weight: 600;
+            color: #003B73;
+        }
+
+        .input-value {
+            color: #4B5E7D;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #003B73;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #E6F0FF;
+            color: #003B73;
+            border: 2px solid #B0D4FF;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .error {
+            background: #FDEDED;
+            color: #B91C1C;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #FCA5A5;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 640px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Result</h1>
+        
+        {% if error %}
+            <div class="error">
+                <h3>Error</h3>
+                <p>{{ error }}</p>
+            </div>
+        {% else %}
+            <div class="result-box">
+                <div class="prediction {{ 'will-churn' if result.prediction == 'Will Churn' else 'will-not-churn' }}">
+                    {{ result.prediction }}
+                </div>
+                <div class="probability">
+                    Exit Probability: {{ result.probability }}
+                </div>
+                <div class="confidence">
+                    Confidence: {{ result.confidence }}
+                </div>
+            </div>
+
+            {% if input_data %}
+            <div class="input-summary">
+                <h3>Input Summary</h3>
+                <div class="input-grid">
+                    <div class="input-item">
+                        <span class="input-label">Credit Score:</span>
+                        <span class="input-value">{{ input_data.credit_score }}</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">Geography:</span>
+                        <span class="input-value">{{ input_data.geography }}</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">Gender:</span>
+                        <span class="input-value">{{ input_data.gender }}</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">Age:</span>
+                        <span class="input-value">{{ input_data.age }}</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">Customer Since:</span>
+                        <span class="input-value">{{ input_data.customer_since }} years</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">Current Account:</span>
+                        <span class="input-value">₹{{ input_data.current_account }}</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">Number of Products:</span>
+                        <span class="input-value">{{ input_data.num_products }}</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">UPI Enabled:</span>
+                        <span class="input-value">{{ 'Yes' if input_data.upi_enabled == 1 else 'No' }}</span>
+                    </div>
+                    <div class="input-item">
+                        <span class="input-label">Yearly Income:</span>
+                        <span class="input-value">₹{{ input_data.estimated_yearly_income }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">Make Another Prediction</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        </div>
+    </div>
+</body>
+</html>
